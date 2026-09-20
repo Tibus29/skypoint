@@ -2,7 +2,7 @@
   "use strict";
 
   // ============ CONSTANTES ============
-  var APP_VERSION = "8"; // garder en phase avec CACHE_NAME dans sw.js
+  var APP_VERSION = "9"; // garder en phase avec CACHE_NAME dans sw.js
   var STORAGE_KEY = "skypoint_games_v1";
   var COLORS = [
     "#f5d0a9", "#e0245e", "#8b8b1a", "#e08a1e",
@@ -338,7 +338,55 @@
     updateFooterButtons();
     scrollTableToCurrent();
     renderChartPanel();
+    adaptScoreTable();
   }
+
+  // Ajuste la hauteur des lignes du tableau pour que tous les joueurs
+  // tiennent dans l'espace visible (utile en paysage avec beaucoup de joueurs).
+  var COMFY_ROW = 56, COMFY_PAD = 10, COMFY_BTN = 36, COMFY_FONT = 16, COMFY_DOT = 18;
+  var MIN_ROW = 30, MIN_PAD = 4, MIN_BTN = 20, MIN_FONT = 12, MIN_DOT = 12;
+
+  function adaptScoreTable() {
+    var g = activeGame();
+    var table = document.getElementById("score-table");
+    var wrap = document.querySelector(".table-wrap");
+    var thead = table && table.querySelector("thead");
+    if (!g || !table || !wrap || !thead || !g.players.length) return;
+
+    var available = wrap.clientHeight;
+    if (!available) return;
+    var headH = thead.getBoundingClientRect().height || 40;
+    var perRow = (available - headH) / g.players.length;
+
+    if (perRow >= COMFY_ROW) {
+      table.style.removeProperty("--cell-pad-v");
+      table.style.removeProperty("--btn-min-h");
+      table.style.removeProperty("--cell-font");
+      table.style.removeProperty("--dot-size");
+      return;
+    }
+
+    var t = Math.max(0, (perRow - MIN_ROW) / (COMFY_ROW - MIN_ROW));
+    var pad = MIN_PAD + t * (COMFY_PAD - MIN_PAD);
+    var btn = MIN_BTN + t * (COMFY_BTN - MIN_BTN);
+    var font = MIN_FONT + t * (COMFY_FONT - MIN_FONT);
+    var dot = MIN_DOT + t * (COMFY_DOT - MIN_DOT);
+
+    table.style.setProperty("--cell-pad-v", pad.toFixed(1) + "px");
+    table.style.setProperty("--btn-min-h", btn.toFixed(1) + "px");
+    table.style.setProperty("--cell-font", font.toFixed(1) + "px");
+    table.style.setProperty("--dot-size", dot.toFixed(1) + "px");
+  }
+
+  function handleViewportChange() {
+    if (document.getElementById("screen-game").classList.contains("active")) {
+      adaptScoreTable();
+    }
+  }
+  window.addEventListener("resize", handleViewportChange);
+  window.addEventListener("orientationchange", function () {
+    setTimeout(handleViewportChange, 300);
+  });
 
   function scrollTableToCurrent() {
     var wrap = document.querySelector(".table-wrap");
