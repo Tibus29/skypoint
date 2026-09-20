@@ -97,6 +97,26 @@ button {
 }
 .content-game { padding: 12px 0 8px; display: flex; }
 
+.chart-panel { display: none; }
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .table-wrap { flex: 1 1 0; min-width: 0; }
+  .chart-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 4px 16px;
+    overflow: auto;
+    border-left: 1px solid var(--border);
+  }
+  .chart-panel-inner { width: 100%; }
+  .chart-panel .chart-wrap { margin-bottom: 6px; }
+  .chart-panel .chart-legend { justify-content: center; margin-bottom: 0; }
+  .chart-panel .chart-empty-hint { padding: 12px 0; }
+}
+
 .section-title {
   font-size: 13px;
   text-transform: uppercase;
@@ -161,6 +181,7 @@ button {
 .btn-primary:active { background: #0071e0; }
 .btn-primary:disabled { background: var(--card-bg-2); color: var(--text-dim); }
 .btn-ghost { background: var(--card-bg); color: var(--accent); width: 100%; margin-bottom: 8px; }
+#btn-add-player-setup { margin-top: 8px; }
 .btn-ghost:active { background: var(--card-bg-2); }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-large { width: 100%; padding: 15px; font-size: 17px; margin-bottom: 4px; }

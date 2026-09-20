@@ -1,5 +1,5 @@
 // Service worker : mise en cache pour un fonctionnement hors-ligne complet.
-var CACHE_NAME = "skypoint-cache-v3";
+var CACHE_NAME = "skypoint-cache-v4";
 var ASSETS = [
   "./",
   "./index.html",

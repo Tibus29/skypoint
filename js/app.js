@@ -336,6 +336,7 @@
 
     updateFooterButtons();
     scrollTableToCurrent();
+    renderChartPanel();
   }
 
   function scrollTableToCurrent() {
@@ -535,10 +536,8 @@
     return { series: series, maxRound: maxRound, minScore: minScore, maxScore: maxScore };
   }
 
-  function renderChart() {
+  function renderChartInto(wrap, legend) {
     var g = activeGame();
-    var wrap = document.getElementById("chart-wrap");
-    var legend = document.getElementById("chart-legend");
     if (!g) { wrap.innerHTML = ""; legend.innerHTML = ""; return; }
 
     var data = buildScoreSeries(g);
@@ -548,7 +547,7 @@
       return;
     }
 
-    var W = 320, H = 220, padL = 26, padR = 14, padT = 14, padB = 22;
+    var W = 320, H = 190, padL = 26, padR = 14, padT = 14, padB = 22;
     var innerW = W - padL - padR;
     var innerH = H - padT - padB;
 
@@ -598,6 +597,13 @@
     legend.innerHTML = data.series.map(function (s) {
       return '<span class="chart-legend-item"><span class="dot" style="background:' + s.color + '"></span>' + escapeHtml(s.name) + '</span>';
     }).join("");
+  }
+
+  function renderChart() {
+    renderChartInto(document.getElementById("chart-wrap"), document.getElementById("chart-legend"));
+  }
+  function renderChartPanel() {
+    renderChartInto(document.getElementById("chart-panel-wrap"), document.getElementById("chart-panel-legend"));
   }
 
   document.getElementById("btn-game-chart").addEventListener("click", function () {
