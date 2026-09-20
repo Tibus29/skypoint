@@ -100,6 +100,7 @@ button {
 .chart-panel { display: none; }
 
 @media (orientation: landscape) and (max-height: 500px) {
+  #screen-game .topbar { display: none; }
   .table-wrap { flex: 1 1 0; min-width: 0; }
   .chart-panel {
     display: flex;
