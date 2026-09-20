@@ -512,6 +512,105 @@
     }
   });
 
+  // ============ GRAPHIQUE ÉVOLUTION DES SCORES ============
+  function buildScoreSeries(g) {
+    var maxRound = 0, minScore = 0, maxScore = 0;
+    var series = g.players.map(function (p) {
+      var pts = [{ x: 0, y: 0 }];
+      var running = 0;
+      g.rounds.forEach(function (r, ri) {
+        var v = r.scores[p.id];
+        if (typeof v === "number") {
+          running += v;
+          pts.push({ x: ri + 1, y: running });
+          if (ri + 1 > maxRound) maxRound = ri + 1;
+        }
+      });
+      pts.forEach(function (pt) {
+        if (pt.y > maxScore) maxScore = pt.y;
+        if (pt.y < minScore) minScore = pt.y;
+      });
+      return { id: p.id, name: p.name, color: p.color, points: pts };
+    });
+    return { series: series, maxRound: maxRound, minScore: minScore, maxScore: maxScore };
+  }
+
+  function renderChart() {
+    var g = activeGame();
+    var wrap = document.getElementById("chart-wrap");
+    var legend = document.getElementById("chart-legend");
+    if (!g) { wrap.innerHTML = ""; legend.innerHTML = ""; return; }
+
+    var data = buildScoreSeries(g);
+    if (data.maxRound === 0) {
+      wrap.innerHTML = '<p class="chart-empty-hint">Pas encore de score enregistré.</p>';
+      legend.innerHTML = "";
+      return;
+    }
+
+    var W = 320, H = 220, padL = 26, padR = 14, padT = 14, padB = 22;
+    var innerW = W - padL - padR;
+    var innerH = H - padT - padB;
+
+    var rangeMax = Math.max(data.maxScore, g.targetScore || 0);
+    var rangeMin = Math.min(0, data.minScore);
+    var pad = (rangeMax - rangeMin) * 0.08 || 5;
+    rangeMax += pad;
+    if (rangeMin < 0) rangeMin -= pad;
+    var span = (rangeMax - rangeMin) || 1;
+
+    function xPos(x) { return padL + (data.maxRound === 0 ? 0 : (x / data.maxRound) * innerW); }
+    function yPos(y) { return padT + innerH - ((y - rangeMin) / span) * innerH; }
+
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">';
+
+    if (g.targetScore) {
+      var ty = yPos(g.targetScore);
+      svg += '<line x1="' + padL + '" y1="' + ty + '" x2="' + (W - padR) + '" y2="' + ty + '" stroke="var(--text-dim)" stroke-width="1" stroke-dasharray="4 3"/>';
+      svg += '<text x="' + (W - padR) + '" y="' + (ty - 4) + '" text-anchor="end" font-size="9" fill="var(--text-dim)">' + g.targetScore + '</text>';
+    }
+
+    var zy = yPos(0);
+    svg += '<line x1="' + padL + '" y1="' + zy + '" x2="' + (W - padR) + '" y2="' + zy + '" stroke="var(--border)" stroke-width="1"/>';
+    svg += '<text x="2" y="' + (zy + 3) + '" font-size="9" fill="var(--text-dim)">0</text>';
+
+    data.series.forEach(function (s) {
+      if (s.points.length < 2) return;
+      var pathPts = s.points.map(function (pt) { return xPos(pt.x) + ',' + yPos(pt.y); }).join(' ');
+      svg += '<polyline points="' + pathPts + '" fill="none" stroke="' + s.color + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+      s.points.forEach(function (pt, i) {
+        if (i === 0) return;
+        svg += '<circle cx="' + xPos(pt.x) + '" cy="' + yPos(pt.y) + '" r="2.5" fill="' + s.color + '"/>';
+      });
+    });
+
+    var step = Math.ceil(data.maxRound / 6) || 1;
+    for (var rr = step; rr <= data.maxRound; rr += step) {
+      svg += '<text x="' + xPos(rr) + '" y="' + (H - 6) + '" font-size="9" text-anchor="middle" fill="var(--text-dim)">' + rr + '</text>';
+    }
+    if (data.maxRound % step !== 0) {
+      svg += '<text x="' + xPos(data.maxRound) + '" y="' + (H - 6) + '" font-size="9" text-anchor="middle" fill="var(--text-dim)">' + data.maxRound + '</text>';
+    }
+
+    svg += '</svg>';
+    wrap.innerHTML = svg;
+
+    legend.innerHTML = data.series.map(function (s) {
+      return '<span class="chart-legend-item"><span class="dot" style="background:' + s.color + '"></span>' + escapeHtml(s.name) + '</span>';
+    }).join("");
+  }
+
+  document.getElementById("btn-game-chart").addEventListener("click", function () {
+    renderChart();
+    openSheet("chart-sheet-overlay");
+  });
+  document.getElementById("btn-close-chart-sheet").addEventListener("click", function () {
+    closeSheet("chart-sheet-overlay");
+  });
+  document.getElementById("chart-sheet-overlay").addEventListener("click", function (e) {
+    if (e.target.id === "chart-sheet-overlay") closeSheet("chart-sheet-overlay");
+  });
+
   // ============ MENU PARTIE ============
   document.getElementById("btn-game-menu").addEventListener("click", function () {
     openSheet("menu-sheet-overlay");

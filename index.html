@@ -85,9 +85,14 @@
       <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"/></svg>
     </button>
     <h2 class="topbar-title" data-el="game-title">Skyjo</h2>
-    <button class="icon-btn" id="btn-game-menu" aria-label="Menu">
-      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
-    </button>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="btn-game-chart" aria-label="Graphique">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M4 20V10h3v10H4zm6.5 0V4h3v16h-3zM17 20v-7h3v7h-3z"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-game-menu" aria-label="Menu">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+      </button>
+    </div>
   </header>
 
   <div class="content content-game">
@@ -190,6 +195,17 @@
     <button class="menu-item menu-item-danger" id="menu-delete-game">
       <span class="menu-icon">🗑</span> Supprimer la partie
     </button>
+  </div>
+</div>
+
+<!-- ===================== BOTTOM SHEET : GRAPHIQUE ===================== -->
+<div class="sheet-overlay" id="chart-sheet-overlay" data-el="chart-sheet-overlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Évolution des scores</div>
+    <div id="chart-wrap" class="chart-wrap" data-el="chart-wrap"></div>
+    <div id="chart-legend" class="chart-legend" data-el="chart-legend"></div>
+    <button class="btn btn-ghost" id="btn-close-chart-sheet">Fermer</button>
   </div>
 </div>
 
