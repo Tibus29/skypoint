@@ -2,6 +2,7 @@
   "use strict";
 
   // ============ CONSTANTES ============
+  var APP_VERSION = "6"; // garder en phase avec CACHE_NAME dans sw.js
   var STORAGE_KEY = "skypoint_games_v1";
   var COLORS = [
     "#f5d0a9", "#e0245e", "#8b8b1a", "#e08a1e",
@@ -789,6 +790,7 @@
     }
     renderHome();
     showScreen("screen-home");
+    document.querySelector('[data-el="app-version"]').textContent = "Skypoint v" + APP_VERSION;
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("sw.js").catch(function () {});

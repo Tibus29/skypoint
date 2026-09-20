@@ -222,6 +222,13 @@ button {
   padding: 0 20px;
 }
 
+.app-version {
+  color: var(--text-dim);
+  font-size: 12px;
+  text-align: center;
+  margin: 32px 0 8px;
+}
+
 /* ===== Table de score ===== */
 .table-wrap {
   flex: 1;
