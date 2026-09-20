@@ -236,11 +236,12 @@ button {
 }
 .score-table thead th.col-name { z-index: 3; }
 .score-table td.cell-name {
+  border-bottom: 1px solid var(--border);
+}
+.score-table td.cell-name .cell-name-inner {
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid var(--border);
-  height: 100%;
 }
 .score-table td.cell-name .dot { width: 18px; height: 18px; flex-shrink: 0; }
 .score-table td.cell-name .name-text {

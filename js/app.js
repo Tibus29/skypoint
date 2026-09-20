@@ -306,7 +306,7 @@
 
       var tdName = document.createElement("td");
       tdName.className = "cell-name";
-      tdName.innerHTML = '<span class="dot" style="background:' + p.color + '"></span><span class="name-text">' + escapeHtml(p.name) + "</span>";
+      tdName.innerHTML = '<span class="cell-name-inner"><span class="dot" style="background:' + p.color + '"></span><span class="name-text">' + escapeHtml(p.name) + "</span></span>";
       tr.appendChild(tdName);
 
       g.rounds.forEach(function (r, ri) {
