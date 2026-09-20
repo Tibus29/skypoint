@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Skypoint</title>
+<meta name="description" content="Compteur de points pour Skyjo">
+<meta name="theme-color" content="#0d0d0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Skypoint">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===================== ÉCRAN : ACCUEIL ===================== -->
+<section id="screen-home" class="screen" data-screen>
+  <header class="topbar">
+    <h1 class="app-title">Skypoint</h1>
+    <button class="icon-btn" id="btn-history" aria-label="Historique">
+      <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8z"/></svg>
+    </button>
+  </header>
+
+  <div class="content">
+    <div id="active-game-card" class="card highlight hidden" data-el="active-game-card">
+      <div class="card-row">
+        <div>
+          <div class="card-label">Partie en cours</div>
+          <div class="card-title" data-el="active-game-name">Skyjo</div>
+        </div>
+        <button class="btn btn-primary" data-action="resume-game">Reprendre</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-large" id="btn-new-game">
+      + Nouvelle partie
+    </button>
+
+    <div class="section-title" data-el="history-title">Dernières parties</div>
+    <div id="home-history-list" class="list" data-el="home-history-list"></div>
+    <p class="empty-hint" data-el="home-empty-hint">Aucune partie terminée pour l'instant.</p>
+  </div>
+</section>
+
+<!-- ===================== ÉCRAN : NOUVELLE PARTIE ===================== -->
+<section id="screen-setup" class="screen" data-screen>
+  <header class="topbar">
+    <button class="icon-btn" data-action="close-setup" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M18.3 5.71L12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.7 2.88 18.3 9.17 12 2.88 5.71 4.3 4.29l6.29 6.3 6.3-6.3z"/></svg>
+    </button>
+    <h2 class="topbar-title">Nouvelle partie</h2>
+    <button class="icon-btn play-btn" id="btn-start-game" aria-label="Démarrer" disabled>
+      <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+    </button>
+  </header>
+
+  <div class="content">
+    <div class="card">
+      <label class="field-label" for="input-game-name">Nom de la partie</label>
+      <input type="text" id="input-game-name" class="text-input" placeholder="Skyjo" value="Skyjo">
+
+      <div class="divider"></div>
+
+      <div class="field-row">
+        <span class="field-label">Score de fin de partie</span>
+        <input type="number" id="input-target-score" class="number-input" value="100" min="10" step="10">
+      </div>
+    </div>
+
+    <div class="section-title">Joueurs</div>
+    <div id="setup-players-list" class="list" data-el="setup-players-list"></div>
+    <button class="btn btn-ghost" id="btn-add-player-setup">+ Ajouter un joueur</button>
+    <p class="empty-hint" id="setup-hint">Ajoute au moins 2 joueurs pour commencer.</p>
+  </div>
+</section>
+
+<!-- ===================== ÉCRAN : PARTIE EN COURS ===================== -->
+<section id="screen-game" class="screen" data-screen>
+  <header class="topbar">
+    <button class="icon-btn" data-action="leave-game" aria-label="Retour">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"/></svg>
+    </button>
+    <h2 class="topbar-title" data-el="game-title">Skyjo</h2>
+    <button class="icon-btn" id="btn-game-menu" aria-label="Menu">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+    </button>
+  </header>
+
+  <div class="content content-game">
+    <div class="table-wrap">
+      <table class="score-table" id="score-table">
+        <thead>
+          <tr id="score-table-head"></tr>
+        </thead>
+        <tbody id="score-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="game-footer" id="game-footer">
+    <button class="footer-nav-btn" id="btn-prev-cell" aria-label="Précédent">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </button>
+    <button class="btn btn-primary footer-main-btn" id="btn-new-round">
+      Manche suivante
+    </button>
+    <button class="footer-nav-btn" id="btn-next-cell" aria-label="Suivant">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ===================== ÉCRAN : FIN DE PARTIE ===================== -->
+<section id="screen-end" class="screen" data-screen>
+  <header class="topbar">
+    <button class="icon-btn" data-action="end-to-home" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M18.3 5.71L12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.7 2.88 18.3 9.17 12 2.88 5.71 4.3 4.29l6.29 6.3 6.3-6.3z"/></svg>
+    </button>
+    <h2 class="topbar-title">Résultats</h2>
+    <span style="width:40px"></span>
+  </header>
+  <div class="content">
+    <div class="winner-banner" id="winner-banner">
+      🏆 <span data-el="winner-name"></span> gagne !
+    </div>
+    <div id="end-ranking-list" class="list" data-el="end-ranking-list"></div>
+    <button class="btn btn-primary btn-large" data-action="end-to-home">Retour à l'accueil</button>
+  </div>
+</section>
+
+<!-- ===================== ÉCRAN : HISTORIQUE ===================== -->
+<section id="screen-history" class="screen" data-screen>
+  <header class="topbar">
+    <button class="icon-btn" data-action="close-history" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M18.3 5.71L12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.7 2.88 18.3 9.17 12 2.88 5.71 4.3 4.29l6.29 6.3 6.3-6.3z"/></svg>
+    </button>
+    <h2 class="topbar-title">Historique</h2>
+    <span style="width:40px"></span>
+  </header>
+  <div class="content">
+    <div id="history-list" class="list" data-el="history-list"></div>
+    <p class="empty-hint" data-el="history-empty-hint">Aucune partie terminée pour l'instant.</p>
+  </div>
+</section>
+
+<!-- ===================== BOTTOM SHEET : SAISIE SCORE ===================== -->
+<div class="sheet-overlay" id="score-sheet-overlay" data-el="score-sheet-overlay">
+  <div class="sheet" id="score-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-player" data-el="sheet-player-name">
+      <span class="dot" data-el="sheet-player-dot"></span>
+      <span data-el="sheet-player-label">Joueur</span>
+    </div>
+    <div class="sheet-score" id="sheet-score-display" data-el="sheet-score-display">0</div>
+    <div class="sheet-keypad">
+      <button class="key" data-key="1">1</button>
+      <button class="key" data-key="2">2</button>
+      <button class="key" data-key="3">3</button>
+      <button class="key" data-key="4">4</button>
+      <button class="key" data-key="5">5</button>
+      <button class="key" data-key="6">6</button>
+      <button class="key" data-key="7">7</button>
+      <button class="key" data-key="8">8</button>
+      <button class="key" data-key="9">9</button>
+      <button class="key key-sign" data-key="sign">±</button>
+      <button class="key" data-key="0">0</button>
+      <button class="key key-back" data-key="back">⌫</button>
+    </div>
+    <button class="btn btn-primary btn-large" id="btn-sheet-done">OK</button>
+  </div>
+</div>
+
+<!-- ===================== BOTTOM SHEET : MENU PARTIE ===================== -->
+<div class="sheet-overlay" id="menu-sheet-overlay" data-el="menu-sheet-overlay">
+  <div class="sheet sheet-menu">
+    <div class="sheet-handle"></div>
+    <button class="menu-item" id="menu-add-player">
+      <span class="menu-icon">＋</span> Ajouter un joueur
+    </button>
+    <button class="menu-item" id="menu-edit-players">
+      <span class="menu-icon">✎</span> Modifier / retirer des joueurs
+    </button>
+    <button class="menu-item" id="menu-end-game">
+      <span class="menu-icon">🏁</span> Terminer la partie
+    </button>
+    <button class="menu-item menu-item-danger" id="menu-delete-game">
+      <span class="menu-icon">🗑</span> Supprimer la partie
+    </button>
+  </div>
+</div>
+
+<!-- ===================== BOTTOM SHEET : GESTION JOUEURS EN PARTIE ===================== -->
+<div class="sheet-overlay" id="players-sheet-overlay" data-el="players-sheet-overlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Joueurs</div>
+    <div id="players-sheet-list" class="list" data-el="players-sheet-list"></div>
+    <button class="btn btn-ghost" id="btn-close-players-sheet">Fermer</button>
+  </div>
+</div>
+
+<!-- ===================== MODALE : NOM JOUEUR ===================== -->
+<div class="sheet-overlay" id="name-modal-overlay" data-el="name-modal-overlay">
+  <div class="modal">
+    <div class="sheet-title" data-el="name-modal-title">Nom du joueur</div>
+    <input type="text" id="name-modal-input" class="text-input" placeholder="Nom" maxlength="20">
+    <div class="modal-colors" id="name-modal-colors"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="name-modal-cancel">Annuler</button>
+      <button class="btn btn-primary" id="name-modal-save">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TOAST / CONFIRM ===================== -->
+<div class="sheet-overlay" id="confirm-overlay" data-el="confirm-overlay">
+  <div class="modal">
+    <div class="sheet-title" data-el="confirm-title">Confirmer</div>
+    <p class="confirm-text" data-el="confirm-text"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="confirm-cancel">Annuler</button>
+      <button class="btn btn-danger" id="confirm-ok">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
