@@ -2,7 +2,7 @@
   "use strict";
 
   // ============ CONSTANTES ============
-  var APP_VERSION = "9"; // garder en phase avec CACHE_NAME dans sw.js
+  var APP_VERSION = "10"; // garder en phase avec CACHE_NAME dans sw.js
   var STORAGE_KEY = "skypoint_games_v1";
   var COLORS = [
     "#f5d0a9", "#e0245e", "#8b8b1a", "#e08a1e",
@@ -545,14 +545,18 @@
     if (sheetNegative) num = -num;
     r.scores[p.id] = num;
     saveGames();
-    closeSheet("score-sheet-overlay");
 
-    // avance automatiquement au joueur suivant s'il en reste dans la manche
+    // avance automatiquement au joueur suivant s'il en reste dans la manche,
+    // et rouvre directement la saisie pour lui
     var g2 = activeGame();
     if (currentCell.playerIndex < g2.players.length - 1) {
       currentCell.playerIndex++;
+      renderGameTable();
+      openScoreSheet();
+    } else {
+      closeSheet("score-sheet-overlay");
+      renderGameTable();
     }
-    renderGameTable();
   });
 
   document.getElementById("score-sheet-overlay").addEventListener("click", function (e) {
