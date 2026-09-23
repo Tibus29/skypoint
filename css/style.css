@@ -238,7 +238,8 @@ button {
   padding: 0 4px;
 }
 .score-table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   width: 100%;
   table-layout: fixed;
 }
